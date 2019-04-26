@@ -42,12 +42,14 @@
         public async Task<List<Issue>> GetIssues(Milestone targetMilestone)
         {
             var allIssues = await gitHubClient.AllIssuesForMilestone(targetMilestone);
-            return allIssues.Where(x => x.State == ItemState.Closed).ToList();
+            
+            return allIssues.Where(x => x.State == ItemState.Closed && !x.IsPullRequest()).ToList();
         }
 
         public Task<IReadOnlyList<Milestone>> GetMilestones()
         {
             var milestonesClient = gitHubClient.Issue.Milestone;
+            
             return milestonesClient.GetAllForRepository(user, repository, new MilestoneRequest
             {
                 State = ItemStateFilter.All
