@@ -71,11 +71,12 @@ namespace ReleaseNotesCompiler
 
         Milestone GetPreviousMilestone(Milestone targetMilestone, IReadOnlyList<Milestone> milestones)
         {
-            var currentVersion = targetMilestone.Version();
+            var currentOffset = targetMilestone.CreatedAt;
+            
             return milestones
-                .OrderByDescending(m => m.Version())
+                .OrderByDescending(m => m.CreatedAt)
                 .Distinct().ToList()
-                .SkipWhile(x => x.Version() >= currentVersion)
+                .SkipWhile(x => x.CreatedAt >= currentOffset)
                 .FirstOrDefault();
         }
 
