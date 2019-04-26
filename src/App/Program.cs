@@ -175,14 +175,12 @@
             if (!string.IsNullOrEmpty(targetCommitish))
                 releaseUpdate.TargetCommitish = targetCommitish;
 
-            //var release = await github.Repository.Release.Create(owner, repository, releaseUpdate);
-
-            if (File.Exists(asset))
-            {
-                var upload = new ReleaseAssetUpload { FileName = Path.GetFileName(asset), ContentType = "application/octet-stream", RawData = File.Open(asset, FileMode.Open) };
-
-                //await github.Repository.Release.UploadAsset(release, upload);
-            }
+//            var release = await github.Repository.Release.Create(owner, repository, releaseUpdate);
+//            if (File.Exists(asset))
+//            {
+//                var upload = new ReleaseAssetUpload { FileName = Path.GetFileName(asset), ContentType = "application/octet-stream", RawData = File.Open(asset, FileMode.Open) };
+//                await github.Repository.Release.UploadAsset(release, upload);
+//            }
         }
 
         static async Task AttachToRelease(GitHubClient github, string owner, string repository, string milestone, string asset)
