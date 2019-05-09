@@ -25,6 +25,12 @@
 
         [Option('m', "milestone", HelpText = "The milestone to use.", Required = true)]
         public string Milestone { get; set; }
+        
+        [Option('f', "outputfile", HelpText = "The file to write release notes to.", Required = true)]
+        public string OutputFile { get; set; }
+        
+        [Option('c', "createfile", HelpText = "Will create release notes file rather than a release.", Required = false)]
+        public bool CreateFile { get; set; }
 
         public GitHubClient CreateGitHubClient()
         {
@@ -110,7 +116,16 @@
             {
                 var github = options.CreateGitHubClient();
 
-                await CreateRelease(github, options.RepositoryOwner, options.RepositoryName, options.Milestone, options.TargetCommitish, options.AssetPath);
+                await CreateRelease(
+                    github,
+                    options.RepositoryOwner,
+                    options.RepositoryName,
+                    options.Milestone,
+                    options.TargetCommitish,
+                    options.AssetPath,
+                    options.OutputFile,
+                    options.CreateFile
+                );
 
                 return 0;
             }
@@ -160,29 +175,43 @@
             }
         }
 
-        static async Task CreateRelease(GitHubClient github, string owner, string repository, string milestone, string targetCommitish, string asset)
+        static async Task CreateRelease(GitHubClient github, string owner, string repository, string milestone, string targetCommitish, string asset, string outputFile, bool createFile)
         {
             var releaseNotesBuilder = new ReleaseNotesBuilder(new DefaultGitHubClient(github, owner, repository), owner, repository, milestone);
-
             var result = await releaseNotesBuilder.BuildReleaseNotes();
 
-            var releaseUpdate = new NewRelease(milestone)
+            if(createFile)
             {
-                Draft = true,
-                Body = result,
-                Name = milestone,
-            };
-            if (!string.IsNullOrEmpty(targetCommitish))
-                releaseUpdate.TargetCommitish = targetCommitish;
+                CreateReleaseNotesFile(result, outputFile);
+            }
+            else
+            {
+                var releaseUpdate = new NewRelease(milestone)
+                {
+                    Draft = true,
+                    Body = result,
+                    Name = milestone,
+                };
+                if (!string.IsNullOrEmpty(targetCommitish))
+                    releaseUpdate.TargetCommitish = targetCommitish;
 
-//            var release = await github.Repository.Release.Create(owner, repository, releaseUpdate);
-//            if (File.Exists(asset))
-//            {
-//                var upload = new ReleaseAssetUpload { FileName = Path.GetFileName(asset), ContentType = "application/octet-stream", RawData = File.Open(asset, FileMode.Open) };
-//                await github.Repository.Release.UploadAsset(release, upload);
-//            }
+                var release = await github.Repository.Release.Create(owner, repository, releaseUpdate);
+                if (File.Exists(asset))
+                {
+                    var upload = new ReleaseAssetUpload { FileName = Path.GetFileName(asset), ContentType = "application/octet-stream", RawData = File.Open(asset, FileMode.Open) };
+                    await github.Repository.Release.UploadAsset(release, upload);
+                }
+            }
         }
 
+        static void CreateReleaseNotesFile(string releaseNotes, string outputFile)
+        {
+            using(var writer = new StreamWriter(outputFile))
+            {
+                writer.Write(releaseNotes);
+            }
+        } 
+        
         static async Task AttachToRelease(GitHubClient github, string owner, string repository, string milestone, string asset)
         {
             if (!File.Exists(asset))
