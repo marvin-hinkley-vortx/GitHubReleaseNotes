@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CCFB4E86-2A64-4E73-A96E-67D58130C960}"
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
+		teamcity-plugin.xml = teamcity-plugin.xml
 	EndProjectSection
 EndProject
 Global

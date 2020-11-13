@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teamcity-agent-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:shemas-jetbrains-com:teamcity-agent-plugin-v1-xml">
+    <info>
+        <name>GitHubReleaseNotes</name>
+        <display-name>GitHub Release Notes Generator</display-name>
+        <version>1.0.0</version>
+        <description>Generates release notes markdown based upon issues within milestones.</description>
+        <vendor>
+            <name>Vortx, Inc.</name>
+        </vendor>
+    </info>
+    <tool-deployment>
+        <layout>
+            <executable-files>
+                <include name='ReleaseNotesCompiler.CLI.exe'/>
+            </executable-files>
+        </layout>
+    </tool-deployment>
+</teamcity-agent-plugin>
