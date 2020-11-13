@@ -11,11 +11,8 @@
 
     abstract class CommonSubOptions
     {
-        [Option('u', "username", HelpText = "The username to access GitHub with.", Required = true)]
-        public string Username { get; set; }
-
-        [Option('p', "password", HelpText = "The password to access GitHub with.", Required = true)]
-        public string Password { get; set; }
+        [Option('t', "accesstoken", HelpText = "The API token to access GitHub with.", Required = true)]
+        public string ApiToken { get; set; }
 
         [Option('o', "owner", HelpText = "The owner of the repository.", Required = true)]
         public string RepositoryOwner { get; set; }
@@ -34,7 +31,7 @@
 
         public GitHubClient CreateGitHubClient()
         {
-            var creds = new Credentials(Username, Password);
+            var creds = new Credentials(ApiToken);
             var github = new GitHubClient(new ProductHeaderValue("ReleaseNotesCompiler")) { Credentials = creds };
 
             return github;

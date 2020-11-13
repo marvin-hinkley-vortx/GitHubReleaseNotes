@@ -5,6 +5,8 @@ using Octokit;
 
 namespace ReleaseNotesCompiler
 {
+    using System;
+
     public static class OctokitExtensions
     {
         public static bool IsPullRequest(this Issue issue)
@@ -24,7 +26,7 @@ namespace ReleaseNotesCompiler
                 Milestone = milestone.Number.ToString(),
                 State = ItemStateFilter.Open
             };
-            var parts = milestone.Url.AbsolutePath.Split('/');
+            var parts = new Uri(milestone.Url).AbsolutePath.Split('/');
             var user = parts[2];
             var repository = parts[3];
             var closedIssues = await gitHubClient.Issue.GetAllForRepository(user, repository, closedIssueRequest);
@@ -34,10 +36,10 @@ namespace ReleaseNotesCompiler
 
         public static string HtmlUrl(this  Milestone milestone)
         {
-            var parts = milestone.Url.AbsolutePath.Split('/');
+            var parts = new Uri(milestone.Url).AbsolutePath.Split('/');
             var user = parts[2];
             var repository = parts[3];
-            return string.Format("https://github.com/{0}/{1}/issues?milestone={2}&state=closed", user, repository, milestone.Number);
+            return $"https://github.com/{user}/{repository}/issues?milestone={milestone.Number}&state=closed";
         }
 
         static IEnumerable<string> FixHeaders(IEnumerable<string> lines)
