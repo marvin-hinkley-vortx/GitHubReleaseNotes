@@ -11,7 +11,7 @@
 
     abstract class CommonSubOptions
     {
-        [Option('t', "accesstoken", HelpText = "The API token to access GitHub with.", Required = true)]
+        [Option('p', "accesstoken", HelpText = "The API token to access GitHub with.", Required = true)]
         public string ApiToken { get; set; }
 
         [Option('o', "owner", HelpText = "The owner of the repository.", Required = true)]
